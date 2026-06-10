@@ -1,0 +1,834 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>3D UI Library — wondermayank</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Space+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #f0f7ff;
+    --bg2: #e6f2ff;
+    --white: #ffffff;
+    --blue-50: #eff6ff;
+    --blue-100: #dbeafe;
+    --blue-200: #bfdbfe;
+    --blue-300: #93c5fd;
+    --blue-400: #60a5fa;
+    --blue-500: #3b82f6;
+    --blue-600: #2563eb;
+    --blue-700: #1d4ed8;
+    --text-main: #0f172a;
+    --text-sub: #334155;
+    --text-muted: #64748b;
+    --border: #bfdbfe;
+    --card-bg: #ffffff;
+    --radius: 12px;
+    --shadow: 0 2px 8px rgba(59,130,246,0.10), 0 1px 3px rgba(0,0,0,0.06);
+    --shadow-hover: 0 8px 28px rgba(59,130,246,0.18), 0 2px 8px rgba(0,0,0,0.08);
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    font-family: 'Inter', sans-serif;
+    background: var(--bg);
+    color: var(--text-main);
+    min-height: 100vh;
+  }
+
+  /* HEADER */
+  header {
+    background: linear-gradient(135deg, #1e3a8a 0%, #1d4ed8 40%, #2563eb 70%, #3b82f6 100%);
+    padding: 56px 24px 48px;
+    text-align: center;
+    position: relative;
+    overflow: hidden;
+  }
+  header::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: radial-gradient(ellipse at 20% 50%, rgba(255,255,255,0.08) 0%, transparent 60%),
+                radial-gradient(ellipse at 80% 20%, rgba(147,197,253,0.12) 0%, transparent 50%);
+  }
+  header::after {
+    content: '';
+    position: absolute;
+    bottom: 0; left: 0; right: 0;
+    height: 3px;
+    background: linear-gradient(90deg, transparent, rgba(255,255,255,0.5), transparent);
+  }
+  .header-badge {
+    display: inline-block;
+    background: rgba(255,255,255,0.15);
+    border: 1px solid rgba(255,255,255,0.25);
+    color: #bfdbfe;
+    font-size: 12px;
+    font-weight: 600;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    padding: 5px 16px;
+    border-radius: 100px;
+    margin-bottom: 20px;
+    position: relative;
+  }
+  header h1 {
+    font-family: 'Space Grotesk', sans-serif;
+    font-size: clamp(2rem, 5vw, 3.5rem);
+    font-weight: 700;
+    color: #ffffff;
+    letter-spacing: -0.02em;
+    line-height: 1.1;
+    position: relative;
+    margin-bottom: 16px;
+  }
+  header h1 span {
+    color: #93c5fd;
+  }
+  header p {
+    font-size: 16px;
+    color: #bfdbfe;
+    max-width: 560px;
+    margin: 0 auto 28px;
+    line-height: 1.6;
+    position: relative;
+  }
+  .header-stats {
+    display: flex;
+    gap: 32px;
+    justify-content: center;
+    flex-wrap: wrap;
+    position: relative;
+  }
+  .stat {
+    text-align: center;
+  }
+  .stat-num {
+    font-family: 'Space Grotesk', sans-serif;
+    font-size: 28px;
+    font-weight: 700;
+    color: #ffffff;
+  }
+  .stat-label {
+    font-size: 12px;
+    color: #93c5fd;
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+  }
+
+  /* SEARCH & FILTER */
+  .controls {
+    background: var(--white);
+    border-bottom: 1px solid var(--border);
+    padding: 20px 24px;
+    position: sticky;
+    top: 0;
+    z-index: 100;
+    box-shadow: 0 2px 12px rgba(59,130,246,0.08);
+  }
+  .controls-inner {
+    max-width: 1200px;
+    margin: 0 auto;
+    display: flex;
+    gap: 12px;
+    align-items: center;
+    flex-wrap: wrap;
+  }
+  .search-wrap {
+    flex: 1;
+    min-width: 200px;
+    position: relative;
+  }
+  .search-wrap svg {
+    position: absolute;
+    left: 12px;
+    top: 50%;
+    transform: translateY(-50%);
+    color: var(--blue-400);
+  }
+  #search {
+    width: 100%;
+    padding: 10px 12px 10px 38px;
+    border: 1.5px solid var(--blue-200);
+    border-radius: 8px;
+    font-size: 14px;
+    font-family: 'Inter', sans-serif;
+    background: var(--blue-50);
+    color: var(--text-main);
+    outline: none;
+    transition: border-color 0.2s, box-shadow 0.2s;
+  }
+  #search:focus {
+    border-color: var(--blue-500);
+    box-shadow: 0 0 0 3px rgba(59,130,246,0.12);
+    background: #fff;
+  }
+  .filter-tabs {
+    display: flex;
+    gap: 6px;
+    flex-wrap: wrap;
+  }
+  .filter-btn {
+    padding: 7px 14px;
+    border-radius: 8px;
+    border: 1.5px solid var(--blue-200);
+    background: var(--blue-50);
+    color: var(--blue-600);
+    font-size: 13px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.2s;
+    white-space: nowrap;
+    font-family: 'Inter', sans-serif;
+  }
+  .filter-btn:hover { background: var(--blue-100); border-color: var(--blue-300); }
+  .filter-btn.active {
+    background: var(--blue-600);
+    color: white;
+    border-color: var(--blue-600);
+  }
+  #result-count {
+    font-size: 13px;
+    color: var(--text-muted);
+    white-space: nowrap;
+  }
+
+  /* MAIN CONTENT */
+  main {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 32px 24px 0;
+  }
+
+  /* CATEGORY SECTION */
+  .category-section {
+    margin-bottom: 48px;
+  }
+  .category-header {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 20px;
+  }
+  .category-icon {
+    width: 36px;
+    height: 36px;
+    border-radius: 10px;
+    background: linear-gradient(135deg, var(--blue-500), var(--blue-600));
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 18px;
+    flex-shrink: 0;
+  }
+  .category-title {
+    font-family: 'Space Grotesk', sans-serif;
+    font-size: 20px;
+    font-weight: 600;
+    color: var(--text-main);
+    letter-spacing: -0.01em;
+  }
+  .category-count {
+    font-size: 13px;
+    color: var(--text-muted);
+    background: var(--blue-100);
+    color: var(--blue-700);
+    padding: 2px 10px;
+    border-radius: 100px;
+    font-weight: 500;
+  }
+
+  /* GRID */
+  .card-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    gap: 16px;
+  }
+
+  /* CARD */
+  .card {
+    background: var(--card-bg);
+    border: 1.5px solid var(--border);
+    border-radius: var(--radius);
+    padding: 20px;
+    transition: all 0.22s cubic-bezier(0.4,0,0.2,1);
+    position: relative;
+    overflow: hidden;
+  }
+  .card::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0; right: 0;
+    height: 3px;
+    background: linear-gradient(90deg, var(--blue-400), var(--blue-600));
+    opacity: 0;
+    transition: opacity 0.2s;
+  }
+  .card:hover {
+    box-shadow: var(--shadow-hover);
+    border-color: var(--blue-300);
+    transform: translateY(-2px);
+  }
+  .card:hover::before { opacity: 1; }
+
+  .card-folder {
+    font-family: 'Space Grotesk', sans-serif;
+    font-size: 14px;
+    font-weight: 600;
+    color: var(--text-main);
+    margin-bottom: 10px;
+    line-height: 1.3;
+  }
+  .card-links {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+  }
+  .card-link {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 8px 12px;
+    background: var(--blue-50);
+    border: 1px solid var(--blue-200);
+    border-radius: 8px;
+    text-decoration: none;
+    color: var(--blue-700);
+    font-size: 13px;
+    font-weight: 500;
+    transition: all 0.18s;
+    overflow: hidden;
+  }
+  .card-link:hover {
+    background: var(--blue-500);
+    border-color: var(--blue-500);
+    color: white;
+  }
+  .card-link svg {
+    flex-shrink: 0;
+    opacity: 0.7;
+  }
+  .card-link:hover svg { opacity: 1; }
+  .link-label {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+  .link-badge {
+    margin-left: auto;
+    font-size: 11px;
+    padding: 1px 7px;
+    border-radius: 4px;
+    background: var(--blue-200);
+    color: var(--blue-700);
+    flex-shrink: 0;
+  }
+  .card-link:hover .link-badge {
+    background: rgba(255,255,255,0.25);
+    color: white;
+  }
+
+  /* HIDDEN */
+  .hidden { display: none !important; }
+  .category-section.all-hidden { display: none; }
+
+  /* NO RESULTS */
+  #no-results {
+    text-align: center;
+    padding: 80px 24px;
+    color: var(--text-muted);
+    display: none;
+  }
+  #no-results h3 { font-size: 20px; margin-bottom: 8px; color: var(--text-sub); }
+
+  /* DIVIDER */
+  .section-divider {
+    height: 1px;
+    background: linear-gradient(90deg, transparent, var(--blue-200), transparent);
+    margin: 48px 0 0;
+  }
+
+  /* FOOTER */
+  footer {
+    background: #0f172a;
+    color: #94a3b8;
+    margin-top: 64px;
+    padding: 48px 24px 32px;
+  }
+  .footer-inner {
+    max-width: 1200px;
+    margin: 0 auto;
+  }
+  .footer-top {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+    gap: 40px;
+    margin-bottom: 40px;
+  }
+  @media (max-width: 768px) {
+    .footer-top { grid-template-columns: 1fr; gap: 28px; }
+  }
+  .footer-brand h2 {
+    font-family: 'Space Grotesk', sans-serif;
+    font-size: 20px;
+    font-weight: 700;
+    color: #ffffff;
+    margin-bottom: 10px;
+  }
+  .footer-brand p {
+    font-size: 14px;
+    line-height: 1.6;
+    color: #64748b;
+  }
+  .footer-col h3 {
+    font-size: 12px;
+    font-weight: 600;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: #475569;
+    margin-bottom: 16px;
+  }
+  .footer-links {
+    list-style: none;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+  }
+  .footer-links a {
+    color: #94a3b8;
+    text-decoration: none;
+    font-size: 14px;
+    transition: color 0.2s;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+  }
+  .footer-links a:hover { color: #60a5fa; }
+  .footer-links a::before {
+    content: '→';
+    font-size: 12px;
+    opacity: 0.5;
+  }
+  .footer-bottom {
+    border-top: 1px solid #1e293b;
+    padding-top: 24px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 12px;
+  }
+  .footer-bottom p { font-size: 13px; color: #475569; }
+  .footer-bottom a { color: #60a5fa; text-decoration: none; }
+  .footer-bottom a:hover { text-decoration: underline; }
+
+  @media (max-width: 600px) {
+    .card-grid { grid-template-columns: 1fr; }
+    header { padding: 40px 16px 36px; }
+    .header-stats { gap: 20px; }
+    .controls-inner { flex-direction: column; }
+    .filter-tabs { justify-content: center; }
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <div class="header-badge">wondermayank · Open Design</div>
+  <h1>3D UI <span>Template Library</span></h1>
+  <p>A curated collection of premium HTML templates, UI components, dashboards, and presentation themes by wondermayank.</p>
+  <div class="header-stats">
+    <div class="stat"><div class="stat-num">153</div><div class="stat-label">Templates</div></div>
+    <div class="stat"><div class="stat-num">8</div><div class="stat-label">Categories</div></div>
+    <div class="stat"><div class="stat-num">200+</div><div class="stat-label">HTML Files</div></div>
+  </div>
+</header>
+
+<div class="controls">
+  <div class="controls-inner">
+    <div class="search-wrap">
+      <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
+      <input type="text" id="search" placeholder="Search templates…" autocomplete="off">
+    </div>
+    <div class="filter-tabs" id="filterTabs">
+      <button class="filter-btn active" data-cat="all">All</button>
+      <button class="filter-btn" data-cat="portfolios">Portfolios</button>
+      <button class="filter-btn" data-cat="presentations">Presentations</button>
+      <button class="filter-btn" data-cat="zhangzara">Zhangzara</button>
+      <button class="filter-btn" data-cat="dashboards">Dashboards</button>
+      <button class="filter-btn" data-cat="documents">Documents</button>
+      <button class="filter-btn" data-cat="social">Cards & Social</button>
+      <button class="filter-btn" data-cat="frames">Frames & Motion</button>
+      <button class="filter-btn" data-cat="components">Components</button>
+    </div>
+    <span id="result-count"></span>
+  </div>
+</div>
+
+<main id="main-content">
+
+<!-- PORTFOLIOS & LANDINGS -->
+<section class="category-section" data-cat="portfolios">
+  <div class="category-header">
+    <div class="category-icon">🚀</div>
+    <span class="category-title">Portfolios & Landings</span>
+    <span class="category-count" data-count>25</span>
+  </div>
+  <div class="card-grid">
+    <div class="card" data-folder="3d-creator-portfolio"><div class="card-folder">3D Creator Portfolio</div><div class="card-links"><a class="card-link" href="https://wondermayank.github.io/3d_website/3d-creator-portfolio/example.html" target="_blank" rel="noopener"><svg width="13" height="13" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg><span class="link-label">example.html</span><span class="link-badge">Live</span></a></div></div>
+    <div class="card" data-folder="ai-designer-portfolio"><div class="card-folder">AI Designer Portfolio</div><div class="card-links"><a class="card-link" href="https://wondermayank.github.io/3d_website/ai-designer-portfolio/example.html" target="_blank" rel="noopener"><svg width="13" height="13" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg><span class="link-label">example.html</span><span class="link-badge">Live</span></a></div></div>
+    <div class="card" data-folder="saas-landing"><div class="card-folder">SaaS Landing</div><div class="card-links"><a class="card-link" href="https://wondermayank.github.io/3d_website/saas-landing/example.html" target="_blank" rel="noopener"><svg width="13" height="13" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg><span class="link-label">example.html</span><span class="link-badge">Live</span></a></div></div>
+    <div class="card" data-folder="cinematic-landing-page"><div class="card-folder">Cinematic Landing Page</div><div class="card-links"><a class="card-link" href="https://wondermayank.github.io/3d_website/cinematic-landing-page/example.html" target="_blank" rel="noopener"><svg width="13" height="13" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg><span class="link-label">example.html</span><span class="link-badge">Live</span></a></div></div>
+    <div class="card" data-folder="dreamcore-landing"><div class="card-folder">Dreamcore Landing</div><div class="card-links"><a class="card-link" href="https://wondermayank.github.io/3d_website/dreamcore-landing/example.html" target="_blank" rel="noopener"><svg width="13" height="13" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg><span class="link-label">example.html</span><span class="link-badge">Live</span></a></div></div>
+    <div class="card" data-folder="mindloop-landing"><div class="card-folder">Mindloop Landing</div><div class="card-links"><a class="card-link" href="https://wondermayank.github.io/3d_website/mindloop-landing/example.html" target="_blank" rel="noopener"><svg width="13" height="13" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg><span class="link-label">example.html</span><span class="link-badge">Live</span></a></div></div>
+    <div class="card" data-folder="liquid-glass-agency"><div class="card-folder">Liquid Glass Agency</div><div class="card-links"><a class="card-link" href="https://wondermayank.github.io/3d_website/liquid-glass-agency/example.html" target="_blank" rel="noopener"><svg width="13" height="13" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg><span class="link-label">example.html</span><span class="link-badge">Live</span></a></div></div>
+    <div class="card" data-folder="layered-depth"><div class="card-folder">Layered Depth</div><div class="card-links"><a class="card-link" href="https://wondermayank.github.io/3d_website/layered-depth/example.html" target="_blank" rel="noopener"><svg width="13" height="13" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg><span class="link-label">example.html</span><span class="link-badge">Live</span></a></div></div>
+    <div class="card" data-folder="luxury-botanical"><div class="card-folder">Luxury Botanical</div><div class="card-links"><a class="card-link" href="https://wondermayank.github.io/3d_website/luxury-botanical/example.html" target="_blank" rel="noopener"><svg width="13" height="13" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg><span class="link-label">example.html</span><span class="link-badge">Live</span></a></div></div>
+    <div class="card" data-folder="mythic-naturecore"><div class="card-folder">Mythic Naturecore</div><div class="card-links"><a class="card-link" href="https://wondermayank.github.io/3d_website/mythic-naturecore/example.html" target="_blank" rel="noopener"><svg width="13" height="13" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg><span class="link-label">example.html</span><span class="link-badge">Live</span></a></div></div>
+    <div class="card" data-folder="nimbus-grid"><div class="card-folder">Nimbus Grid</div><div class="card-links"><a class="card-link" href="https://wondermayank.github.io/3d_website/nimbus-grid/example.html" target="_blank" rel="noopener"><svg width="13" height="13" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg><span class="link-label">example.html</span><span class="link-badge">Live</span></a></div></div>
+    <div class="card" data-folder="open-design-landing"><div class="card-folder">Open Design Landing</div><div class="card-links"><a class="card-link" href="https://wondermayank.github.io/3d_website/open-design-landing/example.html" target="_blank" rel="noopener"><svg width="13" height="13" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg><span class="link-label">example.html</span><span class="link-badge">Live</span></a></div></div>
+    <div class="card" data-folder="open-design-landing-deck"><div class="card-folder">Open Design Landing Deck</div><div class="card-links"><a class="card-link" href="https://wondermayank.github.io/3d_website/open-design-landing-deck/example.html" target="_blank" rel="noopener"><svg width="13" height="13" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg><span class="link-label">example.html</span><span class="link-badge">Live</span></a></div></div>
+    <div class="card" data-folder="portfolio-cosmic"><div class="card-folder">Portfolio Cosmic</div><div class="card-links"><a class="card-link" href="https://wondermayank.github.io/3d_website/portfolio-cosmic/example.html" target="_blank" rel="noopener"><svg width="13" height="13" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg><span class="link-label">example.html</span><span class="link-badge">Live</span></a></div></div>
+    <div class="card" data-folder="shamoni"><div class="card-folder">Shamoni</div><div class="card-links"><a class="card-link" href="https://wondermayank.github.io/3d_website/shamoni/example.html" target="_blank" rel="noopener"><svg width="13" height="13" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg><span class="link-label">example.html</span><span class="link-badge">Live</span></a></div></div>
+    <div class="card" data-folder="stellar-launch"><div class="card-folder">Stellar Launch</div><div class="card-links"><a class="card-link" href="https://wondermayank.github.io/3d_website/stellar-launch/example.html" target="_blank" rel="noopener"><svg width="13" height="13" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg><span class="link-label">example.html</span><span class="link-badge">Live</span></a></div></div>
+    <div class="card" data-folder="velar-luxury-real-estate"><div class="card-folder">Velar Luxury Real Estate</div><div class="card-links"><a class="card-link" href="https://wondermayank.github.io/3d_website/velar-luxury-real-estate/example.html" target="_blank" rel="noopener"><svg width="13" height="13" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg><span class="link-label">example.html</span><span class="link-badge">Live</span></a></div></div>
+    <div class="card" data-folder="skyelite-private-jets"><div class="card-folder">Skyelite Private Jets</div><div class="card-links"><a class="card-link" href="https://wondermayank.github.io/3d_website/skyelite-private-jets/example.html" target="_blank" rel="noopener"><svg width="13" height="13" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg><span class="link-label">example.html</span><span class="link-badge">Live</span></a></div></div>
+    <div class="card" data-folder="acreage-farming"><div class="card-folder">Acreage Farming</div><div class="card-links"><a class="card-link" href="https://wondermayank.github.io/3d_website/acreage-farming/example.html" target="_blank" rel="noopener"><svg width="13" height="13" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg><span class="link-label">example.html</span><span class="link-badge">Live</span></a></div></div>
+    <div class="card" data-folder="aerocore"><div class="card-folder">Aerocore</div><div class="card-links"><a class="card-link" href="https://wondermayank.github.io/3d_website/aerocore/example.html" target="_blank" rel="noopener"><svg width="13" height="13" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg><span class="link-label">example.html</span><span class="link-badge">Live</span></a></div></div>
+    <div class="card" data-folder="orbis-nft"><div class="card-folder">Orbis NFT</div><div class="card-links"><a class="card-link" href="https://wondermayank.github.io/3d_website/orbis-nft/example.html" target="_blank" rel="noopener"><svg width="13" height="13" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg><span class="link-label">example.html</span><span class="link-badge">Live</span></a></div></div>
+    <div class="card" data-folder="evergreen-finance"><div class="card-folder">Evergreen Finance</div><div class="card-links"><a class="card-link" href="https://wondermayank.github.io/3d_website/evergreen-finance/example.html" target="_blank" rel="noopener"><svg width="13" height="13" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg><span class="link-label">example.html</span><span class="link-badge">Live</span></a></div></div>
+    <div class="card" data-folder="codenest-coding-platform"><div class="card-folder">Codenest Coding Platform</div><div class="card-links"><a class="card-link" href="https://wondermayank.github.io/3d_website/codenest-coding-platform/example.html" target="_blank" rel="noopener"><svg width="13" height="13" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg><span class="link-label">example.html</span><span class="link-badge">Live</span></a></div></div>
+    <div class="card" data-folder="innovation"><div class="card-folder">Innovation</div><div class="card-links"><a class="card-link" href="https://wondermayank.github.io/3d_website/innovation/example.html" target="_blank" rel="noopener"><svg width="13" height="13" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg><span class="link-label">example.html</span><span class="link-badge">Live</span></a></div></div>
+    <div class="card" data-folder="kami-landing"><div class="card-folder">Kami Landing</div><div class="card-links"><a class="card-link" href="https://wondermayank.github.io/3d_website/kami-landing/example.html" target="_blank" rel="noopener"><svg width="13" height="13" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg><span class="link-label">example.html</span><span class="link-badge">Live</span></a></div></div>
+  </div>
+</section>
+
+<div class="section-divider"></div>
+
+<!-- PRESENTATIONS & DECKS -->
+<section class="category-section" data-cat="presentations">
+  <div class="category-header">
+    <div class="category-icon">📊</div>
+    <span class="category-title">Presentations & Decks</span>
+    <span class="category-count" data-count>27</span>
+  </div>
+  <div class="card-grid">
+    <div class="card" data-folder="html-ppt"><div class="card-folder">HTML PPT (Master Skill)</div><div class="card-links"><a class="card-link" href="https://wondermayank.github.io/3d_website/html-ppt/examples/demo-deck/index.html" target="_blank" rel="noopener"><svg width="13" height="13" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg><span class="link-label">Demo Deck</span><span class="link-badge">Live</span></a></div></div>
+    <div class="card" data-folder="guizang-ppt"><div class="card-folder">Guizang PPT</div><div class="card-links"><a class="card-link" href="https://wondermayank.github.io/3d_website/guizang-ppt/assets/example-slides.html" target="_blank" rel="noopener"><svg width="13" height="13" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg><span class="link-label">assets/example-slides.html</span><span class="link-badge">Live</span></a><a class="card-link" href="https://wondermayank.github.io/3d_website/guizang-ppt/assets/template.html" target="_blank" rel="noopener"><svg width="13" height="13" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg><span class="link-label">assets/template.html</span><span class="link-badge">Template</span></a></div></div>
+    <div class="card" data-folder="simple-deck"><div class="card-folder">Simple Deck</div><div class="card-links"><a class="card-link" href="https://wondermayank.github.io/3d_website/simple-deck/example.html" target="_blank" rel="noopener"><svg width="13" height="13" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg><span class="link-label">example.html</span><span class="link-badge">Live</span></a><a class="card-link" href="https://wondermayank.github.io/3d_website/simple-deck/assets/template.html" target="_blank" rel="noopener"><svg width="13" height="13" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg><span class="link-label">assets/template.html</span><span class="link-badge">Template</span></a></div></div>
+    <div class="card" data-folder="replit-deck"><div class="card-folder">Replit Deck</div><div class="card-links"><a class="card-link" href="https://wondermayank.github.io/3d_website/replit-deck/assets/template.html" target="_blank" rel="noopener"><svg width="13" height="13" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg><span class="link-label">assets/template.html</span><span class="link-badge">Template</span></a><a class="card-link" href="https://wondermayank.github.io/3d_website/replit-deck/examples/example-atlas.html" target="_blank" rel="noopener"><svg width="13" height="13" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg><span class="link-label">Atlas</span></a><a class="card-link" href="https://wondermayank.github.io/3d_website/replit-deck/examples/example-bluehouse.html" target="_blank" rel="noopener"><svg width="13" height="13" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg><span class="link-label">Bluehouse</span></a><a class="card-link" href="https://wondermayank.github.io/3d_website/replit-deck/examples/example-helix.html" target="_blank" rel="noopener"><svg width="13" height="13" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg><span class="link-label">Helix</span></a><a class="card-link" href="https://wondermayank.github.io/3d_website/replit-deck/examples/example-holm.html" target="_blank" rel="noopener"><svg width="13" height="13" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg><span class="link-label">Holm</span></a></div></div>
+    <div class="card" data-folder="kami-deck"><div class="card-folder">Kami Deck</div><div class="card-links"><a class="card-link" href="https://wondermayank.github.io/3d_website/kami-deck/example.html" target="_blank" rel="noopener"><svg width="13" height="13" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg><span class="link-label">example.html</span><span class="link-badge">Live</span></a></div></div>
+    <div class="card" data-folder="deck-guizang-editorial"><div class="card-folder">Deck: Guizang Editorial</div><div class="card-links"><a class="card-link" href="https://wondermayank.github.io/3d_website/deck-guizang-editorial/example.html" target="_blank" rel="noopener"><svg width="13" height="13" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg><span class="link-label">example.html</span><span class="link-badge">Live</span></a></div></div>
+    <div class="card" data-folder="deck-open-slide-canvas"><div class="card-folder">Deck: Open Slide Canvas</div><div class="card-links"><a class="card-link" href="https://wondermayank.github.io/3d_website/deck-open-slide-canvas/example.html" target="_blank" rel="noopener"><svg width="13" height="13" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg><span class="link-label">example.html</span><span class="link-badge">Live</span></a></div></div>
+    <div class="card" data-folder="deck-swiss-international"><div class="card-folder">Deck: Swiss International</div><div class="card-links"><a class="card-link" href="https://wondermayank.github.io/3d_website/deck-swiss-international/example.html" target="_blank" rel="noopener"><svg width="13" height="13" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg><span class="link-label">example.html</span><span class="link-badge">Live</span></a></div></div>
+    <div class="card" data-folder="html-ppt-course-module"><div class="card-folder">HTML PPT: Course Module</div><div class="card-links"><a class="card-link" href="https://wondermayank.github.io/3d_website/html-ppt-course-module/example.html" target="_blank" rel="noopener"><svg width="13" height="13" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg><span class="link-label">example.html</span><span class="link-badge">Live</span></a></div></div>
+    <div class="card" data-folder="html-ppt-dir-key-nav-minimal"><div class="card-folder">HTML PPT: Dir Key Nav Minimal</div><div class="card-links"><a class="card-link" href="https://wondermayank.github.io/3d_website/html-ppt-dir-key-nav-minimal/example.html" target="_blank" rel="noopener"><svg width="13" height="13" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg><span class="link-label">example.html</span><span class="link-badge">Live</span></a></div></div>
+    <div class="card" data-folder="html-ppt-graphify-dark-graph"><div class="card-folder">HTML PPT: Graphify Dark</div><div class="card-links"><a class="card-link" href="https://wondermayank.github.io/3d_website/html-ppt-graphify-dark-graph/example.html" target="_blank" rel="noopener"><svg width="13" height="13" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg><span class="link-label">example.html</span><span class="link-badge">Live</span></a></div></div>
+    <div class="card" data-folder="html-ppt-hermes-cyber-terminal"><div class="card-folder">HTML PPT: Hermes Cyber Terminal</div><div class="card-links"><a class="card-link" href="https://wondermayank.github.io/3d_website/html-ppt-hermes-cyber-terminal/example.html" target="_blank" rel="noopener"><svg width="13" height="13" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg><span class="link-label">example.html</span><span class="link-badge">Live</span></a></div></div>
+    <div class="card" data-folder="html-ppt-knowledge-arch-blueprint"><div class="card-folder">HTML PPT: Knowledge Blueprint</div><div class="card-links"><a class="card-link" href="https://wondermayank.github.io/3d_website/html-ppt-knowledge-arch-blueprint/example.html" target="_blank" rel="noopener"><svg width="13" height="13" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg><span class="link-label">example.html</span><span class="link-badge">Live</span></a></div></div>
+    <div class="card" data-folder="html-ppt-obsidian-claude-gradient"><div class="card-folder">HTML PPT: Obsidian Claude</div><div class="card-links"><a class="card-link" href="https://wondermayank.github.io/3d_website/html-ppt-obsidian-claude-gradient/example.html" target="_blank" rel="noopener"><svg width="13" height="13" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg><span class="link-label">example.html</span><span class="link-badge">Live</span></a></div></div>
+    <div class="card" data-folder="html-ppt-pitch-deck"><div class="card-folder">HTML PPT: Pitch Deck</div><div class="card-links"><a class="card-link" href="https://wondermayank.github.io/3d_website/html-ppt-pitch-deck/example.html" target="_blank" rel="noopener"><svg width="13" height="13" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg><span class="link-label">example.html</span><span class="link-badge">Live</span></a></div></div>
+    <div class="card" data-folder="html-ppt-presenter-mode-reveal"><div class="card-folder">HTML PPT: Presenter Mode</div><div class="card-links"><a class="card-link" href="https://wondermayank.github.io/3d_website/html-ppt-presenter-mode-reveal/example.html" target="_blank" rel="noopener"><svg width="13" height="13" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg><span class="link-label">example.html</span><span class="link-badge">Live</span></a></div></div>
+    <div class="card" data-folder="html-ppt-product-launch"><div class="card-folder">HTML PPT: Product Launch</div><div class="card-links"><a class="card-link" href="https://wondermayank.github.io/3d_website/html-ppt-product-launch/example.html" target="_blank" rel="noopener"><svg width="13" height="13" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg><span class="link-label">example.html</span><span class="link-badge">Live</span></a></div></div>
+    <div class="card" data-folder="html-ppt-taste-brutalist"><div class="card-folder">HTML PPT: Taste Brutalist</div><div class="card-links"><a class="card-link" href="https://wondermayank.github.io/3d_website/html-ppt-taste-brutalist/example.html" target="_blank" rel="noopener"><svg width="13" height="13" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg><span class="link-label">example.html</span><span class="link-badge">Live</span></a></div></div>
+    <div class="card" data-folder="html-ppt-taste-editorial"><div class="card-folder">HTML PPT: Taste Editorial</div><div class="card-links"><a class="card-link" href="https://wondermayank.github.io/3d_website/html-ppt-taste-editorial/example.html" target="_blank" rel="noopener"><svg width="13" height="13" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg><span class="link-label">example.html</span><span class="link-badge">Live</span></a></div></div>
+    <div class="card" data-folder="html-ppt-tech-sharing"><div class="card-folder">HTML PPT: Tech Sharing</div><div class="card-links"><a class="card-link" href="https://wondermayank.github.io/3d_website/html-ppt-tech-sharing/example.html" target="_blank" rel="noopener"><svg width="13" height="13" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg><span class="link-label">example.html</span><span class="link-badge">Live</span></a></div></div>
+    <div class="card" data-folder="html-ppt-testing-safety-alert"><div class="card-folder">HTML PPT: Safety Alert</div><div class="card-links"><a class="card-link" href="https://wondermayank.github.io/3d_website/html-ppt-testing-safety-alert/example.html" target="_blank" rel="noopener"><svg width="13" height="13" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg><span class="link-label">example.html</span><span class="link-badge">Live</span></a></div></div>
+    <div class="card" data-folder="html-ppt-weekly-report"><div class="card-folder">HTML PPT: Weekly Report</div><div class="card-links"><a class="card-link" href="https://wondermayank.github.io/3d_website/html-ppt-weekly-report/example.html" target="_blank" rel="noopener"><svg width="13" height="13" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg><span class="link-label">example.html</span><span class="link-badge">Live</span></a></div></div>
+    <div class="card" data-folder="html-ppt-xhs-pastel-card"><div class="card-folder">HTML PPT: XHS Pastel Card</div><div class="card-links"><a class="card-link" href="https://wondermayank.github.io/3d_website/html-ppt-xhs-pastel-card/example.html" target="_blank" rel="noopener"><svg width="13" height="13" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg><span class="link-label">example.html</span><span class="link-badge">Live</span></a></div></div>
+    <div class="card" data-folder="html-ppt-xhs-post"><div class="card-folder">HTML PPT: XHS Post</div><div class="card-links"><a class="card-link" href="https://wondermayank.github.io/3d_website/html-ppt-xhs-post/example.html" target="_blank" rel="noopener"><svg width="13" height="13" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg><span class="link-label">example.html</span><span class="link-badge">Live</span></a></div></div>
+    <div class="card" data-folder="html-ppt-xhs-white-editorial"><div class="card-folder">HTML PPT: XHS White Editorial</div><div class="card-links"><a class="card-link" href="https://wondermayank.github.io/3d_website/html-ppt-xhs-white-editorial/example.html" target="_blank" rel="noopener"><svg width="13" height="13" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg><span class="link-label">example.html</span><span class="link-badge">Live</span></a></div></div>
+    <div class="card" data-folder="ppt-keynote"><div class="card-folder">PPT Keynote</div><div class="card-links"><a class="card-link" href="https://wondermayank.github.io/3d_website/ppt-keynote/example.html" target="_blank" rel="noopener"><svg width="13" height="13" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg><span class="link-label">example.html</span><span class="link-badge">Live</span></a></div></div>
+    <div class="card" data-folder="weekly-update"><div class="card-folder">Weekly Update Deck</div><div class="card-links"><a class="card-link" href="https://wondermayank.github.io/3d_website/weekly-update/example.html" target="_blank" rel="noopener"><svg width="13" height="13" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg><span class="link-label">example.html</span><span class="link-badge">Live</span></a></div></div>
+  </div>
+</section>
+
+<div class="section-divider"></div>
+
+<!-- ZHANGZARA THEMES -->
+<section class="category-section" data-cat="zhangzara">
+  <div class="category-header">
+    <div class="category-icon">🎨</div>
+    <span class="category-title">Zhangzara Themes</span>
+    <span class="category-count" data-count>32</span>
+  </div>
+  <div class="card-grid" id="zhangzara-grid">
+    <!-- Generated from list -->
+  </div>
+</section>
+
+<div class="section-divider"></div>
+
+<!-- DASHBOARDS & APPS -->
+<section class="category-section" data-cat="dashboards">
+  <div class="category-header">
+    <div class="category-icon">📈</div>
+    <span class="category-title">Dashboards & Apps</span>
+    <span class="category-count" data-count>18</span>
+  </div>
+  <div class="card-grid">
+    <div class="card" data-folder="dashboard"><div class="card-folder">Dashboard</div><div class="card-links"><a class="card-link" href="https://wondermayank.github.io/3d_website/dashboard/example.html" target="_blank" rel="noopener"><svg width="13" height="13" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg><span class="link-label">example.html</span><span class="link-badge">Live</span></a></div></div>
+    <div class="card" data-folder="dashboard-ui-glass"><div class="card-folder">Dashboard UI Glass</div><div class="card-links"><a class="card-link" href="https://wondermayank.github.io/3d_website/dashboard-ui-glass/example.html" target="_blank" rel="noopener"><svg width="13" height="13" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg><span class="link-label">example.html</span><span class="link-badge">Live</span></a></div></div>
+    <div class="card" data-folder="flowai-live-dashboard-template"><div class="card-folder">FlowAI Live Dashboard</div><div class="card-links"><a class="card-link" href="https://wondermayank.github.io/3d_website/flowai-live-dashboard-template/example.html" target="_blank" rel="noopener"><svg width="13" height="13" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg><span class="link-label">example.html</span><span class="link-badge">Live</span></a><a class="card-link" href="https://wondermayank.github.io/3d_website/flowai-live-dashboard-template/assets/template.html" target="_blank" rel="noopener"><svg width="13" height="13" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg><span class="link-label">assets/template.html</span></a></div></div>
+    <div class="card" data-folder="github-dashboard"><div class="card-folder">GitHub Dashboard</div><div class="card-links"><a class="card-link" href="https://wondermayank.github.io/3d_website/github-dashboard/example.html" target="_blank" rel="noopener"><svg width="13" height="13" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg><span class="link-label">example.html</span><span class="link-badge">Live</span></a></div></div>
+    <div class="card" data-folder="live-dashboard"><div class="card-folder">Live Dashboard</div><div class="card-links"><a class="card-link" href="https://wondermayank.github.io/3d_website/live-dashboard/example.html" target="_blank" rel="noopener"><svg width="13" height="13" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg><span class="link-label">example.html</span><span class="link-badge">Live</span></a><a class="card-link" href="https://wondermayank.github.io/3d_website/live-dashboard/assets/template.html" target="_blank" rel="noopener"><svg width="13" height="13" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg><span class="link-label">assets/template.html</span></a></div></div>
+    <div class="card" data-folder="live-artifact"><div class="card-folder">Live Artifact (6 Examples)</div><div class="card-links"><a class="card-link" href="https://wondermayank.github.io/3d_website/live-artifact/examples/baby-health-live.html" target="_blank" rel="noopener"><svg width="13" height="13" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg><span class="link-label">Baby Health</span></a><a class="card-link" href="https://wondermayank.github.io/3d_website/live-artifact/examples/competitor-radar-live.html" target="_blank" rel="noopener"><svg width="13" height="13" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg><span class="link-label">Competitor Radar</span></a><a class="card-link" href="https://wondermayank.github.io/3d_website/live-artifact/examples/crm-table-live.html" target="_blank" rel="noopener"><svg width="13" height="13" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg><span class="link-label">CRM Table</span></a><a class="card-link" href="https://wondermayank.github.io/3d_website/live-artifact/examples/crypto-dashboard.html" target="_blank" rel="noopener"><svg width="13" height="13" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg><span class="link-label">Crypto Dashboard</span></a><a class="card-link" href="https://wondermayank.github.io/3d_website/live-artifact/examples/stock-dashboard.html" target="_blank" rel="noopener"><svg width="13" height="13" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg><span class="link-label">Stock Dashboard</span></a></div></div>
+    <div class="card" data-folder="social-media-dashboard"><div class="card-folder">Social Media Dashboard</div><div class="card-links"><a class="card-link" href="https://wondermayank.github.io/3d_website/social-media-dashboard/example.html" target="_blank" rel="noopener"><svg width="13" height="13" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg><span class="link-label">example.html</span><span class="link-badge">Live</span></a></div></div>
+    <div class="card" data-folder="social-media-matrix-tracker-template"><div class="card-folder">Social Media Matrix Tracker</div><div class="card-links"><a class="card-link" href="https://wondermayank.github.io/3d_website/social-media-matrix-tracker-template/example.html" target="_blank" rel="noopener"><svg width="13" height="13" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg><span class="link-label">example.html</span><span class="link-badge">Live</span></a><a class="card-link" href="https://wondermayank.github.io/3d_website/social-media-matrix-tracker-template/assets/template.html" target="_blank" rel="noopener"><svg width="13" height="13" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg><span class="link-label">assets/template.html</span></a></div></div>
+    <div class="card" data-folder="trading-analysis-dashboard-template"><div class="card-folder">Trading Analysis Dashboard</div><div class="card-links"><a class="card-link" href="https://wondermayank.github.io/3d_website/trading-analysis-dashboard-template/example.html" target="_blank" rel="noopener"><svg width="13" height="13" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg><span class="link-label">example.html</span><span class="link-badge">Live</span></a><a class="card-link" href="https://wondermayank.github.io/3d_website/trading-analysis-dashboard-template/assets/template.html" target="_blank" rel="noopener"><svg width="13" height="13" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg><span class="link-label">assets/template.html</span></a></div></div>
+    <div class="card" data-folder="mobile-app"><div class="card-folder">Mobile App</div><div class="card-links"><a class="card-link" href="https://wondermayank.github.io/3d_website/mobile-app/example.html" target="_blank" rel="noopener"><svg width="13" height="13" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg><span class="link-label">example.html</span><span class="link-badge">Live</span></a><a class="card-link" href="https://wondermayank.github.io/3d_website/mobile-app/assets/template.html" target="_blank" rel="noopener"><svg width="13" height="13" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg><span class="link-label">assets/template.html</span></a></div></div>
+    <div class="card" data-folder="gamified-app"><div class="card-folder">Gamified App</div><div class="card-links"><a class="card-link" href="https://wondermayank.github.io/3d_website/gamified-app/example.html" target="_blank" rel="noopener"><svg width="13" height="13" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg><span class="link-label">example.html</span><span class="link-badge">Live</span></a></div></div>
+    <div class="card" data-folder="kanban-board"><div class="card-folder">Kanban Board</div><div class="card-links"><a class="card-link" href="https://wondermayank.github.io/3d_website/kanban-board/example.html" target="_blank" rel="noopener"><svg width="13" height="13" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg><span class="link-label">example.html</span><span class="link-badge">Live</span></a></div></div>
+    <div class="card" data-folder="team-okrs"><div class="card-folder">Team OKRs</div><div class="card-links"><a class="card-link" href="https://wondermayank.github.io/3d_website/team-okrs/example.html" target="_blank" rel="noopener"><svg width="13" height="13" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg><span class="link-label">example.html</span><span class="link-badge">Live</span></a></div></div>
+    <div class="card" data-folder="orbit-general"><div class="card-folder">Orbit General</div><div class="card-links"><a class="card-link" href="https://wondermayank.github.io/3d_website/orbit-general/example.html" target="_blank" rel="noopener"><svg width="13" height="13" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg><span class="link-label">example.html</span><span class="link-badge">Live</span></a></div></div>
+    <div class="card" data-folder="orbit-github"><div class="card-folder">Orbit: GitHub</div><div class="card-links"><a class="card-link" href="https://wondermayank.github.io/3d_website/orbit-github/example.html" target="_blank" rel="noopener"><svg width="13" height="13" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg><span class="link-label">example.html</span><span class="link-badge">Live</span></a></div></div>
+    <div class="card" data-folder="orbit-gmail"><div class="card-folder">Orbit: Gmail</div><div class="card-links"><a class="card-link" href="https://wondermayank.github.io/3d_website/orbit-gmail/example.html" target="_blank" rel="noopener"><svg width="13" height="13" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg><span class="link-label">example.html</span><span class="link-badge">Live</span></a></div></div>
+    <div class="card" data-folder="orbit-linear"><div class="card-folder">Orbit: Linear</div><div class="card-links"><a class="card-link" href="https://wondermayank.github.io/3d_website/orbit-linear/example.html" target="_blank" rel="noopener"><svg width="13" height="13" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg><span class="link-label">example.html</span><span class="link-badge">Live</span></a></div></div>
+    <div class="card" data-folder="orbit-notion"><div class="card-folder">Orbit: Notion</div><div class="card-links"><a class="card-link" href="https://wondermayank.github.io/3d_website/orbit-notion/example.html" target="_blank" rel="noopener"><svg width="13" height="13" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg><span class="link-label">example.html</span><span class="link-badge">Live</span></a></div></div>
+  </div>
+</section>
+
+<div class="section-divider"></div>
+
+<!-- DOCUMENTS & REPORTS -->
+<section class="category-section" data-cat="documents">
+  <div class="category-header">
+    <div class="category-icon">📄</div>
+    <span class="category-title">Documents & Reports</span>
+    <span class="category-count" data-count>16</span>
+  </div>
+  <div class="card-grid">
+    <div class="card" data-folder="blog-post"><div class="card-folder">Blog Post</div><div class="card-links"><a class="card-link" href="https://wondermayank.github.io/3d_website/blog-post/example.html" target="_blank" rel="noopener"><svg width="13" height="13" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg><span class="link-label">example.html</span><span class="link-badge">Live</span></a></div></div>
+    <div class="card" data-folder="article-magazine"><div class="card-folder">Article Magazine</div><div class="card-links"><a class="card-link" href="https://wondermayank.github.io/3d_website/article-magazine/example.html" target="_blank" rel="noopener"><svg width="13" height="13" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg><span class="link-label">example.html</span><span class="link-badge">Live</span></a></div></div>
+    <div class="card" data-folder="data-report"><div class="card-folder">Data Report</div><div class="card-links"><a class="card-link" href="https://wondermayank.github.io/3d_website/data-report/example.html" target="_blank" rel="noopener"><svg width="13" height="13" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg><span class="link-label">example.html</span><span class="link-badge">Live</span></a></div></div>
+    <div class="card" data-folder="finance-report"><div class="card-folder">Finance Report</div><div class="card-links"><a class="card-link" href="https://wondermayank.github.io/3d_website/finance-report/example.html" target="_blank" rel="noopener"><svg width="13" height="13" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg><span class="link-label">example.html</span><span class="link-badge">Live</span></a></div></div>
+    <div class="card" data-folder="clinical-case-report"><div class="card-folder">Clinical Case Report</div><div class="card-links"><a class="card-link" href="https://wondermayank.github.io/3d_website/clinical-case-report/example.html" target="_blank" rel="noopener"><svg width="13" height="13" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg><span class="link-label">example.html</span><span class="link-badge">Live</span></a><a class="card-link" href="https://wondermayank.github.io/3d_website/clinical-case-report/examples/example-stemi.html" target="_blank" rel="noopener"><svg width="13" height="13" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg><span class="link-label">examples/example-stemi.html</span></a></div></div>
+    <div class="card" data-folder="docs-page"><div class="card-folder">Docs Page</div><div class="card-links"><a class="card-link" href="https://wondermayank.github.io/3d_website/docs-page/example.html" target="_blank" rel="noopener"><svg width="13" height="13" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg><span class="link-label">example.html</span><span class="link-badge">Live</span></a></div></div>
+    <div class="card" data-folder="doc-kami-parchment"><div class="card-folder">Doc: Kami Parchment</div><div class="card-links"><a class="card-link" href="https://wondermayank.github.io/3d_website/doc-kami-parchment/example.html" target="_blank" rel="noopener"><svg width="13" height="13" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg><span class="link-label">example.html</span><span class="link-badge">Live</span></a></div></div>
+    <div class="card" data-folder="digital-eguide"><div class="card-folder">Digital eGuide</div><div class="card-links"><a class="card-link" href="https://wondermayank.github.io/3d_website/digital-eguide/example.html" target="_blank" rel="noopener"><svg width="13" height="13" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg><span class="link-label">example.html</span><span class="link-badge">Live</span></a></div></div>
+    <div class="card" data-folder="eng-runbook"><div class="card-folder">Engineering Runbook</div><div class="card-links"><a class="card-link" href="https://wondermayank.github.io/3d_website/eng-runbook/example.html" target="_blank" rel="noopener"><svg width="13" height="13" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg><span class="link-label">example.html</span><span class="link-badge">Live</span></a></div></div>
+    <div class="card" data-folder="hr-onboarding"><div class="card-folder">HR Onboarding</div><div class="card-links"><a class="card-link" href="https://wondermayank.github.io/3d_website/hr-onboarding/example.html" target="_blank" rel="noopener"><svg width="13" height="13" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg><span class="link-label">example.html</span><span class="link-badge">Live</span></a></div></div>
+    <div class="card" data-folder="invoice"><div class="card-folder">Invoice</div><div class="card-links"><a class="card-link" href="https://wondermayank.github.io/3d_website/invoice/example.html" target="_blank" rel="noopener"><svg width="13" height="13" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg><span class="link-label">example.html</span><span class="link-badge">Live</span></a></div></div>
+    <div class="card" data-folder="meeting-notes"><div class="card-folder">Meeting Notes</div><div class="card-links"><a class="card-link" href="https://wondermayank.github.io/3d_website/meeting-notes/example.html" target="_blank" rel="noopener"><svg width="13" height="13" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg><span class="link-label">example.html</span><span class="link-badge">Live</span></a></div></div>
+    <div class="card" data-folder="pm-spec"><div class="card-folder">PM Spec / PRD</div><div class="card-links"><a class="card-link" href="https://wondermayank.github.io/3d_website/pm-spec/example.html" target="_blank" rel="noopener"><svg width="13" height="13" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg><span class="link-label">example.html</span><span class="link-badge">Live</span></a></div></div>
+    <div class="card" data-folder="resume-modern"><div class="card-folder">Resume Modern</div><div class="card-links"><a class="card-link" href="https://wondermayank.github.io/3d_website/resume-modern/example.html" target="_blank" rel="noopener"><svg width="13" height="13" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg><span class="link-label">example.html</span><span class="link-badge">Live</span></a></div></div>
+    <div class="card" data-folder="ib-pitch-book"><div class="card-folder">IB Pitch Book</div><div class="card-links"><a class="card-link" href="https://wondermayank.github.io/3d_website/ib-pitch-book/example.html" target="_blank" rel="noopener"><svg width="13" height="13" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg><span class="link-label">example.html</span><span class="link-badge">Live</span></a><a class="card-link" href="https://wondermayank.github.io/3d_website/ib-pitch-book/assets/template.html" target="_blank" rel="noopener"><svg width="13" height="13" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg><span class="link-label">assets/template.html</span></a></div></div>
+    <div class="card" data-folder="codex-interactive-capability-map"><div class="card-folder">Codex Capability Map</div><div class="card-links"><a class="card-link" href="https://wondermayank.github.io/3d_website/codex-interactive-capability-map/example.html" target="_blank" rel="noopener"><svg width="13" height="13" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg><span class="link-label">example.html</span><span class="link-badge">Live</span></a></div></div>
+  </div>
+</section>
+
+<div class="section-divider"></div>
+
+<!-- CARDS & SOCIAL -->
+<section class="category-section" data-cat="social">
+  <div class="category-header">
+    <div class="category-icon">📱</div>
+    <span class="category-title">Cards & Social</span>
+    <span class="category-count" data-count>10</span>
+  </div>
+  <div class="card-grid">
+    <div class="card" data-folder="card-twitter"><div class="card-folder">Card: Twitter</div><div class="card-links"><a class="card-link" href="https://wondermayank.github.io/3d_website/card-twitter/example.html" target="_blank" rel="noopener"><svg width="13" height="13" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg><span class="link-label">example.html</span><span class="link-badge">Live</span></a></div></div>
+    <div class="card" data-folder="card-xiaohongshu"><div class="card-folder">Card: Xiaohongshu</div><div class="card-links"><a class="card-link" href="https://wondermayank.github.io/3d_website/card-xiaohongshu/example.html" target="_blank" rel="noopener"><svg width="13" height="13" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg><span class="link-label">example.html</span><span class="link-badge">Live</span></a></div></div>
+    <div class="card" data-folder="social-carousel"><div class="card-folder">Social Carousel</div><div class="card-links"><a class="card-link" href="https://wondermayank.github.io/3d_website/social-carousel/example.html" target="_blank" rel="noopener"><svg width="13" height="13" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg><span class="link-label">example.html</span><span class="link-badge">Live</span></a></div></div>
+    <div class="card" data-folder="social-reddit-card"><div class="card-folder">Social: Reddit Card</div><div class="card-links"><a class="card-link" href="https://wondermayank.github.io/3d_website/social-reddit-card/example.html" target="_blank" rel="noopener"><svg width="13" height="13" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg><span class="link-label">example.html</span><span class="link-badge">Live</span></a></div></div>
+    <div class="card" data-folder="social-spotify-card"><div class="card-folder">Social: Spotify Card</div><div class="card-links"><a class="card-link" href="https://wondermayank.github.io/3d_website/social-spotify-card/example.html" target="_blank" rel="noopener"><svg width="13" height="13" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg><span class="link-label">example.html</span><span class="link-badge">Live</span></a></div></div>
+    <div class="card" data-folder="social-x-post-card"><div class="card-folder">Social: X Post Card</div><div class="card-links"><a class="card-link" href="https://wondermayank.github.io/3d_website/social-x-post-card/example.html" target="_blank" rel="noopener"><svg width="13" height="13" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg><span class="link-label">example.html</span><span class="link-badge">Live</span></a></div></div>
+    <div class="card" data-folder="email-marketing"><div class="card-folder">Email Marketing</div><div class="card-links"><a class="card-link" href="https://wondermayank.github.io/3d_website/email-marketing/example.html" target="_blank" rel="noopener"><svg width="13" height="13" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg><span class="link-label">example.html</span><span class="link-badge">Live</span></a></div></div>
+    <div class="card" data-folder="image-poster"><div class="card-folder">Image Poster</div><div class="card-links"><a class="card-link" href="https://wondermayank.github.io/3d_website/image-poster/example.html" target="_blank" rel="noopener"><svg width="13" height="13" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg><span class="link-label">example.html</span><span class="link-badge">Live</span></a></div></div>
+    <div class="card" data-folder="magazine-poster"><div class="card-folder">Magazine Poster</div><div class="card-links"><a class="card-link" href="https://wondermayank.github.io/3d_website/magazine-poster/example.html" target="_blank" rel="noopener"><svg width="13" height="13" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg><span class="link-label">example.html</span><span class="link-badge">Live</span></a></div></div>
+    <div class="card" data-folder="poster-hero"><div class="card-folder">Poster Hero</div><div class="card-links"><a class="card-link" href="https://wondermayank.github.io/3d_website/poster-hero/example.html" target="_blank" rel="noopener"><svg width="13" height="13" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg><span class="link-label">example.html</span><span class="link-badge">Live</span></a></div></div>
+  </div>
+</section>
+
+<div class="section-divider"></div>
+
+<!-- FRAMES & MOTION -->
+<section class="category-section" data-cat="frames">
+  <div class="category-header">
+    <div class="category-icon">🎬</div>
+    <span class="category-title">Frames & Motion</span>
+    <span class="category-count" data-count>13</span>
+  </div>
+  <div class="card-grid">
+    <div class="card" data-folder="frame-data-chart-nyt"><div class="card-folder">Frame: NYT Data Chart</div><div class="card-links"><a class="card-link" href="https://wondermayank.github.io/3d_website/frame-data-chart-nyt/example.html" target="_blank" rel="noopener"><svg width="13" height="13" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg><span class="link-label">example.html</span><span class="link-badge">Live</span></a></div></div>
+    <div class="card" data-folder="frame-flowchart-sticky"><div class="card-folder">Frame: Sticky Flowchart</div><div class="card-links"><a class="card-link" href="https://wondermayank.github.io/3d_website/frame-flowchart-sticky/example.html" target="_blank" rel="noopener"><svg width="13" height="13" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg><span class="link-label">example.html</span><span class="link-badge">Live</span></a></div></div>
+    <div class="card" data-folder="frame-glitch-title"><div class="card-folder">Frame: Glitch Title</div><div class="card-links"><a class="card-link" href="https://wondermayank.github.io/3d_website/frame-glitch-title/example.html" target="_blank" rel="noopener"><svg width="13" height="13" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg><span class="link-label">example.html</span><span class="link-badge">Live</span></a></div></div>
+    <div class="card" data-folder="frame-light-leak-cinema"><div class="card-folder">Frame: Light Leak Cinema</div><div class="card-links"><a class="card-link" href="https://wondermayank.github.io/3d_website/frame-light-leak-cinema/example.html" target="_blank" rel="noopener"><svg width="13" height="13" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg><span class="link-label">example.html</span><span class="link-badge">Live</span></a></div></div>
+    <div class="card" data-folder="frame-liquid-bg-hero"><div class="card-folder">Frame: Liquid BG Hero</div><div class="card-links"><a class="card-link" href="https://wondermayank.github.io/3d_website/frame-liquid-bg-hero/example.html" target="_blank" rel="noopener"><svg width="13" height="13" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg><span class="link-label">example.html</span><span class="link-badge">Live</span></a></div></div>
+    <div class="card" data-folder="frame-logo-outro"><div class="card-folder">Frame: Logo Outro</div><div class="card-links"><a class="card-link" href="https://wondermayank.github.io/3d_website/frame-logo-outro/example.html" target="_blank" rel="noopener"><svg width="13" height="13" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg><span class="link-label">example.html</span><span class="link-badge">Live</span></a></div></div>
+    <div class="card" data-folder="frame-macos-notification"><div class="card-folder">Frame: macOS Notification</div><div class="card-links"><a class="card-link" href="https://wondermayank.github.io/3d_website/frame-macos-notification/example.html" target="_blank" rel="noopener"><svg width="13" height="13" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg><span class="link-label">example.html</span><span class="link-badge">Live</span></a></div></div>
+    <div class="card" data-folder="motion-frames"><div class="card-folder">Motion Frames</div><div class="card-links"><a class="card-link" href="https://wondermayank.github.io/3d_website/motion-frames/example.html" target="_blank" rel="noopener"><svg width="13" height="13" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg><span class="link-label">example.html</span><span class="link-badge">Live</span></a></div></div>
+    <div class="card" data-folder="sprite-animation"><div class="card-folder">Sprite Animation</div><div class="card-links"><a class="card-link" href="https://wondermayank.github.io/3d_website/sprite-animation/example.html" target="_blank" rel="noopener"><svg width="13" height="13" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg><span class="link-label">example.html</span><span class="link-badge">Live</span></a></div></div>
+    <div class="card" data-folder="video-hyperframes"><div class="card-folder">Video Hyperframes</div><div class="card-links"><a class="card-link" href="https://wondermayank.github.io/3d_website/video-hyperframes/example.html" target="_blank" rel="noopener"><svg width="13" height="13" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg><span class="link-label">example.html</span><span class="link-badge">Live</span></a></div></div>
+    <div class="card" data-folder="video-shortform"><div class="card-folder">Video Shortform</div><div class="card-links"><a class="card-link" href="https://wondermayank.github.io/3d_website/video-shortform/example.html" target="_blank" rel="noopener"><svg width="13" height="13" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg><span class="link-label">example.html</span><span class="link-badge">Live</span></a></div></div>
+    <div class="card" data-folder="vfx-text-cursor"><div class="card-folder">VFX Text Cursor</div><div class="card-links"><a class="card-link" href="https://wondermayank.github.io/3d_website/vfx-text-cursor/example.html" target="_blank" rel="noopener"><svg width="13" height="13" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg><span class="link-label">example.html</span><span class="link-badge">Live</span></a></div></div>
+    <div class="card" data-folder="audio-jingle"><div class="card-folder">Audio Jingle</div><div class="card-links"><a class="card-link" href="https://wondermayank.github.io/3d_website/audio-jingle/example.html" target="_blank" rel="noopener"><svg width="13" height="13" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg><span class="link-label">example.html</span><span class="link-badge">Live</span></a></div></div>
+  </div>
+</section>
+
+<div class="section-divider"></div>
+
+<!-- UI COMPONENTS -->
+<section class="category-section" data-cat="components">
+  <div class="category-header">
+    <div class="category-icon">🧩</div>
+    <span class="category-title">UI Components & Tools</span>
+    <span class="category-count" data-count>15</span>
+  </div>
+  <div class="card-grid">
+    <div class="card" data-folder="contact-widget"><div class="card-folder">Contact Widget</div><div class="card-links"><a class="card-link" href="https://wondermayank.github.io/3d_website/contact-widget/example.html" target="_blank" rel="noopener"><svg width="13" height="13" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg><span class="link-label">example.html</span><span class="link-badge">Live</span></a></div></div>
+    <div class="card" data-folder="critique"><div class="card-folder">Critique / Design Review</div><div class="card-links"><a class="card-link" href="https://wondermayank.github.io/3d_website/critique/example.html" target="_blank" rel="noopener"><svg width="13" height="13" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg><span class="link-label">example.html</span><span class="link-badge">Live</span></a></div></div>
+    <div class="card" data-folder="dating-web"><div class="card-folder">Dating Web</div><div class="card-links"><a class="card-link" href="https://wondermayank.github.io/3d_website/dating-web/example.html" target="_blank" rel="noopener"><svg width="13" height="13" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg><span class="link-label">example.html</span><span class="link-badge">Live</span></a></div></div>
+    <div class="card" data-folder="mobile-onboarding"><div class="card-folder">Mobile Onboarding</div><div class="card-links"><a class="card-link" href="https://wondermayank.github.io/3d_website/mobile-onboarding/example.html" target="_blank" rel="noopener"><svg width="13" height="13" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg><span class="link-label">example.html</span><span class="link-badge">Live</span></a></div></div>
+    <div class="card" data-folder="mockup-device-3d"><div class="card-folder">Mockup Device 3D</div><div class="card-links"><a class="card-link" href="https://wondermayank.github.io/3d_website/mockup-device-3d/example.html" target="_blank" rel="noopener"><svg width="13" height="13" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg><span class="link-label">example.html</span><span class="link-badge">Live</span></a></div></div>
+    <div class="card" data-folder="pricing-page"><div class="card-folder">Pricing Page</div><div class="card-links"><a class="card-link" href="https://wondermayank.github.io/3d_website/pricing-page/example.html" target="_blank" rel="noopener"><svg width="13" height="13" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg><span class="link-label">example.html</span><span class="link-badge">Live</span></a></div></div>
+    <div class="card" data-folder="waitlist-page"><div class="card-folder">Waitlist Page</div><div class="card-links"><a class="card-link" href="https://wondermayank.github.io/3d_website/waitlist-page/example.html" target="_blank" rel="noopener"><svg width="13" height="13" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg><span class="link-label">example.html</span><span class="link-badge">Live</span></a><a class="card-link" href="https://wondermayank.github.io/3d_website/waitlist-page/assets/template.html" target="_blank" rel="noopener"><svg width="13" height="13" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg><span class="link-label">assets/template.html</span></a></div></div>
+    <div class="card" data-folder="web-prototype"><div class="card-folder">Web Prototype</div><div class="card-links"><a class="card-link" href="https://wondermayank.github.io/3d_website/web-prototype/example.html" target="_blank" rel="noopener"><svg width="13" height="13" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg><span class="link-label">example.html</span><span class="link-badge">Live</span></a><a class="card-link" href="https://wondermayank.github.io/3d_website/web-prototype/assets/template.html" target="_blank" rel="noopener"><svg width="13" height="13" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg><span class="link-label">assets/template.html</span></a></div></div>
+    <div class="card" data-folder="web-prototype-taste-brutalist"><div class="card-folder">Web Prototype: Brutalist</div><div class="card-links"><a class="card-link" href="https://wondermayank.github.io/3d_website/web-prototype-taste-brutalist/example.html" target="_blank" rel="noopener"><svg width="13" height="13" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg><span class="link-label">example.html</span><span class="link-badge">Live</span></a></div></div>
+    <div class="card" data-folder="web-prototype-taste-editorial"><div class="card-folder">Web Prototype: Editorial</div><div class="card-links"><a class="card-link" href="https://wondermayank.github.io/3d_website/web-prototype-taste-editorial/example.html" target="_blank" rel="noopener"><svg width="13" height="13" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg><span class="link-label">example.html</span><span class="link-badge">Live</span></a></div></div>
+    <div class="card" data-folder="web-prototype-taste-soft"><div class="card-folder">Web Prototype: Soft</div><div class="card-links"><a class="card-link" href="https://wondermayank.github.io/3d_website/web-prototype-taste-soft/example.html" target="_blank" rel="noopener"><svg width="13" height="13" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg><span class="link-label">example.html</span><span class="link-badge">Live</span></a></div></div>
+    <div class="card" data-folder="tweaks"><div class="card-folder">Tweaks (Live Controls)</div><div class="card-links"><a class="card-link" href="https://wondermayank.github.io/3d_website/tweaks/example.html" target="_blank" rel="noopener"><svg width="13" height="13" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg><span class="link-label">example.html</span><span class="link-badge">Live</span></a><a class="card-link" href="https://wondermayank.github.io/3d_website/tweaks/assets/wrap.html" target="_blank" rel="noopener"><svg width="13" height="13" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg><span class="link-label">assets/wrap.html</span></a></div></div>
+    <div class="card" data-folder="wireframe-sketch"><div class="card-folder">Wireframe Sketch</div><div class="card-links"><a class="card-link" href="https://wondermayank.github.io/3d_website/wireframe-sketch/example.html" target="_blank" rel="noopener"><svg width="13" height="13" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg><span class="link-label">example.html</span><span class="link-badge">Live</span></a></div></div>
+    <div class="card" data-folder="dating-web"><div class="card-folder">Dating Web Dashboard</div><div class="card-links"><a class="card-link" href="https://wondermayank.github.io/3d_website/dating-web/example.html" target="_blank" rel="noopener"><svg width="13" height="13" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg><span class="link-label">example.html</span><span class="link-badge">Live</span></a></div></div>
+    <div class="card" data-folder="mockup-device-3d"><div class="card-folder">Device 3D Showcase</div><div class="card-links"><a class="card-link" href="https://wondermayank.github.io/3d_website/mockup-device-3d/example.html" target="_blank" rel="noopener"><svg width="13" height="13" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg><span class="link-label">example.html</span><span class="link-badge">Live</span></a></div></div>
+  </div>
+</section>
+
+<div id="no-results">
+  <h3>No templates found</h3>
+  <p>Try a different search term or filter.</p>
+</div>
+
+</main>
+
+<footer>
+  <div class="footer-inner">
+    <div class="footer-top">
+      <div class="footer-brand">
+        <h2>wondermayank</h2>
+        <p>A curated library of premium HTML UI templates, presentation themes, and interactive components — open design for everyone.</p>
+      </div>
+      <div class="footer-col">
+        <h3>Creator</h3>
+        <ul class="footer-links">
+          <li><a href="https://wondermayank.github.io/" target="_blank" rel="noopener">wondermayank.github.io</a></li>
+          <li><a href="https://wondermayank.github.io/terms" target="_blank" rel="noopener">Terms of Service</a></li>
+          <li><a href="https://wondermayank.github.io/privacy" target="_blank" rel="noopener">Privacy Policy</a></li>
+          <li><a href="https://wondermayank.github.io/disclaimer" target="_blank" rel="noopener">Disclaimer</a></li>
+          <li><a href="https://wondermayank.github.io/contact" target="_blank" rel="noopener">Contact Owner</a></li>
+        </ul>
+      </div>
+      <div class="footer-col">
+        <h3>Resources</h3>
+        <ul class="footer-links">
+          <li><a href="https://commercesehoga.github.io/dashboard" target="_blank" rel="noopener">CBT Mock Platform</a></li>
+          <li><a href="https://commercesehoga.github.io/help" target="_blank" rel="noopener">Donation / Support</a></li>
+        </ul>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <p>© 2025 <a href="https://wondermayank.github.io/" target="_blank" rel="noopener">wondermayank</a> · Open Design</p>
+      <p>153 templates · 8 categories · 200+ HTML files</p>
+    </div>
+  </div>
+</footer>
+
+<script>
+// Generate Zhangzara cards
+const zhangzaraThemes = [
+  ['8-bit-orbit','8-Bit Orbit','Pixel-art neon arcade aesthetic'],
+  ['biennale-yellow','Biennale Yellow','Solar yellow on warm parchment'],
+  ['block-frame','Block Frame','Neobrutalist pastel-neon color blocks'],
+  ['blue-professional','Blue Professional','Electric cobalt blue on cream paper'],
+  ['bold-poster','Bold Poster','Editorial poster with massive Shrikhand display'],
+  ['broadside','Broadside','Dark editorial with fire orange accent'],
+  ['capsule','Capsule','Modular pill-shaped cards on warm bone'],
+  ['cartesian','Cartesian','Quiet warm-neutral Playfair serifs'],
+  ['cobalt-grid','Cobalt Grid','Electric cobalt italic serifs on graph-paper'],
+  ['coral','Coral','Cream and coral on near-black Bebas Neue'],
+  ['creative-mode','Creative Mode','Cream canvas with multi-color accents'],
+  ['daisy-days','Daisy Days','Cheerful pastel deck with hand-drawn daisies'],
+  ['editorial-tri-tone','Editorial Tri-tone','Three-color editorial: pink, mustard, burgundy'],
+  ['grove','Grove','Forest-green canvas with cream type'],
+  ['long-table','Long Table','Warm cream supper-club aesthetic'],
+  ['mat','Mat','Dark sage with burnt-orange accent'],
+  ['monochrome','Monochrome','Ivory ledger paper all-black type'],
+  ['neo-grid-bold','Neo Grid Bold','Editorial neo-brutalism neon yellow'],
+  ['peoples-platform','Peoples Platform','Activist poster energy blue/orange/red'],
+  ['pin-and-paper','Pin and Paper','Yellow paper with safety-pin illustrations'],
+  ['pink-script','Pink Script','Black canvas hot pink accent'],
+  ['playful','Playful','Sun-warm peach with Syne display'],
+  ['raw-grid','Raw Grid','Neo-brutalist with thick borders'],
+  ['retro-windows','Retro Windows','Windows 95 chrome aesthetic'],
+  ['retro-zine','Retro Zine','Beige paper green accent riso-print'],
+  ['sakura-chroma','Sakura Chroma','Vintage Japanese cassette-package'],
+  ['scatterbrain','Scatterbrain','Post-it inspired pastel sticky notes'],
+  ['signal','Signal','Deep navy with bone and muted-gold'],
+  ['soft-editorial','Soft Editorial','Cormorant Garamond on warm paper'],
+  ['stencil-tablet','Stencil Tablet','Bone paper stencil-cut headlines'],
+  ['studio','Studio','Black canvas electric-yellow type'],
+  ['vellum','Vellum','Deep navy with warm-yellow Cormorant serifs'],
+];
+
+const grid = document.getElementById('zhangzara-grid');
+const linkSvg = `<svg width="13" height="13" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>`;
+zhangzaraThemes.forEach(([slug, name, desc]) => {
+  const folder = `html-ppt-zhangzara-${slug}`;
+  const url = `https://wondermayank.github.io/3d_website/${folder}/example.html`;
+  grid.innerHTML += `<div class="card" data-folder="${folder}"><div class="card-folder">${name}</div><div class="card-links"><a class="card-link" href="${url}" target="_blank" rel="noopener">${linkSvg}<span class="link-label">example.html</span><span class="link-badge">Live</span></a></div></div>`;
+});
+
+// Search + filter
+const searchInput = document.getElementById('search');
+const filterBtns = document.querySelectorAll('.filter-btn');
+const cards = () => document.querySelectorAll('.card');
+const sections = () => document.querySelectorAll('.category-section');
+const noResults = document.getElementById('no-results');
+const resultCount = document.getElementById('result-count');
+
+let activeCat = 'all';
+
+function updateCounts() {
+  const visible = document.querySelectorAll('.card:not(.hidden)').length;
+  resultCount.textContent = visible + ' template' + (visible !== 1 ? 's' : '');
+  let anyVisible = false;
+  sections().forEach(sec => {
+    const visCards = sec.querySelectorAll('.card:not(.hidden)').length;
+    if (visCards === 0) sec.classList.add('all-hidden');
+    else { sec.classList.remove('all-hidden'); anyVisible = true; }
+  });
+  noResults.style.display = anyVisible ? 'none' : 'block';
+}
+
+function applyFilters() {
+  const q = searchInput.value.toLowerCase().trim();
+  cards().forEach(card => {
+    const folder = card.getAttribute('data-folder') || '';
+    const section = card.closest('.category-section');
+    const cat = section ? section.getAttribute('data-cat') : '';
+    const matchCat = activeCat === 'all' || cat === activeCat;
+    const matchQ = !q || folder.toLowerCase().includes(q) || card.textContent.toLowerCase().includes(q);
+    card.classList.toggle('hidden', !(matchCat && matchQ));
+  });
+  updateCounts();
+}
+
+searchInput.addEventListener('input', applyFilters);
+
+filterBtns.forEach(btn => {
+  btn.addEventListener('click', () => {
+    filterBtns.forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+    activeCat = btn.getAttribute('data-cat');
+    applyFilters();
+  });
+});
+
+// Initial count
+setTimeout(updateCounts, 100);
+</script>
+</body>
+</html>
